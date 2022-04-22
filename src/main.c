@@ -1,10 +1,14 @@
 #include "server/server.h"
 #include "server/connection.h"
-#include "const.h"
+#include "serial/serial.h"
+#include "constdef.h"
+#include "zigbee/zigbee.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 int main() {
-    TCP_SERVER *server = tcp_server_listen(NULL, 8888);
+    /*TCP_SERVER *server = tcp_server_listen(NULL, 8888);
     if (server == NULL) {
         return 1;
     }
@@ -27,5 +31,22 @@ int main() {
     }
 
     tcp_server_close(server);
+    return 0;*/
+    ZIGBEE *zigbee = zigbee_connect("/dev/ttyUSB0");
+    if (zigbee == NULL) {
+        perror("zigbee connect error!\n");
+    }
+    while (TRUE) {
+        int operation;
+        scanf("%d", &operation);
+        if (operation == 11) {
+            break;
+        }
+        bool_t ok = zigbee_operation(zigbee, operation);
+        if (!ok) {
+            break;
+        }
+    }
+    zigbee_disconnect(zigbee);
     return 0;
 }

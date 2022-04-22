@@ -8,7 +8,7 @@ TCP_CONNECTION_DATA *tcp_connection_read(TCP_CONNECTION connection) {
     if (connection == -1) {
         return NULL;
     }
-    char dst[TCP_CONNECTION_BUFFER_SIZE] = {0};
+    byte_t dst[TCP_CONNECTION_BUFFER_SIZE] = {0};
     size_t length = read(connection, dst, TCP_CONNECTION_BUFFER_SIZE);
     //连接断开
     if (length <= 0) {
@@ -21,7 +21,7 @@ TCP_CONNECTION_DATA *tcp_connection_read(TCP_CONNECTION connection) {
     data->device = dst[0];
     data->operation = dst[1];
 
-    data->data = malloc(sizeof(char) * (length - 2));
+    data->data = malloc(sizeof(byte_t) * (length - 2));
     data->data_length = length - 2;
 
     data_copy(data->data, dst, 2, (int) length);
@@ -29,12 +29,12 @@ TCP_CONNECTION_DATA *tcp_connection_read(TCP_CONNECTION connection) {
 }
 
 //发送数据，offset为偏移量，size为数据长度，返回发送的数据长度
-size_t tcp_connection_write(TCP_CONNECTION connection, const char *data, int offset, size_t size) {
+size_t tcp_connection_write(TCP_CONNECTION connection, const byte_t *data, int offset, size_t size) {
     if (connection == -1) {
         return 0;
     }
     unsigned long end = offset + size;
-    char *buffer = malloc(sizeof(char) * size);
+    byte_t *buffer = malloc(sizeof(byte_t) * size);
     data_copy(buffer, data, offset, (int) end);
     size_t length = write(connection, buffer, size);
     free(buffer);
