@@ -4,9 +4,15 @@
 #ifndef MANAGER_CONSTDEF_H
 #define MANAGER_CONSTDEF_H
 
-#define TRUE 1
-#define FALSE 0
-typedef unsigned char bool_t;
+#include <fcntl.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stddef.h>
+
 typedef unsigned char byte_t;
 
 #endif

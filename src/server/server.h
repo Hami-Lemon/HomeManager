@@ -6,6 +6,7 @@
 #define __SERVER_H
 
 #include "connection.h"
+#include "../constdef.h"
 
 //最大的tcp连接数
 extern const int TCP_SERVER_MAX_CONNECTION;
@@ -17,15 +18,15 @@ typedef struct TCP_SERVER {
     char *ip;
     //端口号
     int port;
-} TCP_SERVER;
+} tcp_server_t;
 
 //开启tcp服务
-TCP_SERVER *tcp_server_listen(char *ip, int port);
+tcp_server_t *tcp_server_listen(char *ip, int port);
 
 //等待连接
-TCP_CONNECTION tcp_server_accept(TCP_SERVER *server);
+tcp_connection_t tcp_server_accept(tcp_server_t *server);
 
 //停止服务
-void tcp_server_close(TCP_SERVER *server);
+void tcp_server_close(tcp_server_t *server);
 
 #endif

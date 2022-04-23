@@ -3,9 +3,8 @@
 #include "serial/serial.h"
 #include "constdef.h"
 #include "zigbee/zigbee.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include "camera/camera.h"
+#include "util.h"
 
 int main() {
     /*TCP_SERVER *server = tcp_server_listen(NULL, 8888);
@@ -32,21 +31,36 @@ int main() {
 
     tcp_server_close(server);
     return 0;*/
-    ZIGBEE *zigbee = zigbee_connect("/dev/ttyUSB0");
+    /*zigbee_t *zigbee = zigbee_connect("/dev/ttyUSB0");
     if (zigbee == NULL) {
         perror("zigbee connect error!\n");
     }
-    while (TRUE) {
+    while (true) {
         int operation;
         scanf("%d", &operation);
         if (operation == 11) {
             break;
         }
-        bool_t ok = zigbee_operation(zigbee, operation);
+        bool ok = zigbee_operation(zigbee, operation);
         if (!ok) {
             break;
         }
     }
-    zigbee_disconnect(zigbee);
+    zigbee_disconnect(zigbee);*/
+    camera_t *camera = camera_attach("/dev/video0");
+    if (camera == NULL) {
+        return 1;
+    }
+    camera_option_t opt;
+    opt.width = 1920;
+    opt.height = 1080;
+    opt.format = 0;
+    opt.fps = 30;
+
+    camera_config(camera, opt);
+    printf("%d %d\n", camera->option.height, camera->option.width);
+    printf("%d %d\n", camera->option.format, camera->option.fps);
+    close(camera->fd);
+    free(camera);
     return 0;
 }

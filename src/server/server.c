@@ -2,15 +2,11 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 const int TCP_SERVER_MAX_CONNECTION = 10;
 
 //开启tcp服务
-TCP_SERVER *tcp_server_listen(char *ip, int port) {
+tcp_server_t *tcp_server_listen(char *ip, int port) {
     //默认ip和端口号
     if (ip == NULL) {
         ip = "0.0.0.0";
@@ -28,7 +24,7 @@ TCP_SERVER *tcp_server_listen(char *ip, int port) {
     int opt = 1;
     int ret = setsockopt(sock_ser, SOL_SOCKET, SO_REUSEADDR, (void *) &opt, sizeof(opt));
     if (-1 == ret) {
-        perror("set socket option error!\n");
+        perror("set socket option error!");
         exit(1);
     }
 
@@ -47,7 +43,7 @@ TCP_SERVER *tcp_server_listen(char *ip, int port) {
         exit(1);
     }
 
-    TCP_SERVER *server = malloc(sizeof(TCP_SERVER));
+    tcp_server_t *server = malloc(sizeof(tcp_server_t));
     server->sock_server = sock_ser;
     server->ip = malloc(sizeof(char) * strlen(ip));
     strcpy(server->ip, ip);
@@ -56,7 +52,7 @@ TCP_SERVER *tcp_server_listen(char *ip, int port) {
 }
 
 //等待连接
-TCP_CONNECTION tcp_server_accept(TCP_SERVER *server) {
+tcp_connection_t tcp_server_accept(tcp_server_t *server) {
     if (server == NULL) {
         return -1;
     }
@@ -64,13 +60,13 @@ TCP_CONNECTION tcp_server_accept(TCP_SERVER *server) {
     socklen_t addr_len = sizeof(accept_addr);
     int sock_conn = accept(server->sock_server, (struct sockaddr *) &accept_addr, &addr_len);
     if (sock_conn == -1) {
-        perror("get connection error!\n");
+        perror("get connection error!");
     }
     return sock_conn;
 }
 
 //停止服务
-void tcp_server_close(TCP_SERVER *server) {
+void tcp_server_close(tcp_server_t *server) {
     if (server == NULL) {
         return;
     }

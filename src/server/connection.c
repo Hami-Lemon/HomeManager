@@ -1,10 +1,8 @@
 #include "connection.h"
 #include "../util.h"
-#include <stdlib.h>
-#include <unistd.h>
 
 //读取数据，返回读取的数据长度，内容保存在dst中，如果连接关闭，返回-1
-TCP_CONNECTION_DATA *tcp_connection_read(TCP_CONNECTION connection) {
+tcp_connection_data_t *tcp_connection_read(tcp_connection_t connection) {
     if (connection == -1) {
         return NULL;
     }
@@ -14,7 +12,7 @@ TCP_CONNECTION_DATA *tcp_connection_read(TCP_CONNECTION connection) {
     if (length <= 0) {
         return NULL;
     }
-    TCP_CONNECTION_DATA *data = malloc(sizeof(TCP_CONNECTION_DATA));
+    tcp_connection_data_t *data = malloc(sizeof(tcp_connection_data_t));
     if (length < 2) {
         return NULL;
     }
@@ -29,7 +27,7 @@ TCP_CONNECTION_DATA *tcp_connection_read(TCP_CONNECTION connection) {
 }
 
 //发送数据，offset为偏移量，size为数据长度，返回发送的数据长度
-size_t tcp_connection_write(TCP_CONNECTION connection, const byte_t *data, int offset, size_t size) {
+size_t tcp_connection_write(tcp_connection_t connection, const byte_t *data, int offset, size_t size) {
     if (connection == -1) {
         return 0;
     }
@@ -46,7 +44,7 @@ size_t tcp_connection_write(TCP_CONNECTION connection, const byte_t *data, int o
 }
 
 //关闭连接
-void tcp_connection_close(TCP_CONNECTION connection) {
+void tcp_connection_close(tcp_connection_t connection) {
     if (connection == -1) {
         return;
     }
@@ -54,7 +52,7 @@ void tcp_connection_close(TCP_CONNECTION connection) {
 }
 
 //释放数据体
-void tcp_connection_data_release(TCP_CONNECTION_DATA *data) {
+void tcp_connection_data_release(tcp_connection_data_t *data) {
     if (data == NULL) {
         return;
     }

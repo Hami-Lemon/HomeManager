@@ -3,7 +3,6 @@
 //
 
 #include "zigbee.h"
-#include <stdlib.h>
 
 byte_t send_data[ZIGBEE_BUFFER_SIZE];
 
@@ -17,15 +16,15 @@ void init_send_data() {
 }
 
 //连接ZIGBEE
-ZIGBEE *zigbee_connect(char *name) {
-    SERIAL_OPTION option;
+zigbee_t *zigbee_connect(char *name) {
+    serial_option_t option;
     option.name = name;
     option.baud = B115200;
-    SERIAL serial = serial_open(option);
+    serial_t serial = serial_open(option);
     if (serial == -1) {
         return NULL;
     }
-    ZIGBEE *zigbee = malloc(sizeof(ZIGBEE));
+    zigbee_t *zigbee = malloc(sizeof(zigbee_t));
     zigbee->serial = serial;
     byte_t buffer[ZIGBEE_BUFFER_SIZE] = {0};
     if (zigbee_read(zigbee, buffer) == 0) {
@@ -37,11 +36,11 @@ ZIGBEE *zigbee_connect(char *name) {
 }
 
 //读取数据
-int zigbee_read(ZIGBEE *zigbee, byte_t *dst) {
+int zigbee_read(zigbee_t *zigbee, byte_t *dst) {
     if (zigbee == NULL) {
         return 0;
     }
-    SERIAL serial = zigbee->serial;
+    serial_t serial = zigbee->serial;
     int len;
     do {
         len = (int) serial_read(serial, dst, ZIGBEE_BUFFER_SIZE);
@@ -53,21 +52,21 @@ int zigbee_read(ZIGBEE *zigbee, byte_t *dst) {
 }
 
 //发送命令
-bool_t zigbee_operation(ZIGBEE *zigbee, byte_t operation) {
+bool zigbee_operation(zigbee_t *zigbee, byte_t operation) {
     if (zigbee == NULL) {
-        return FALSE;
+        return false;
     }
     send_data[1] = zigbee->device_id;
     send_data[4] = operation;
     size_t len = serial_write(zigbee->serial, send_data, 0, ZIGBEE_BUFFER_SIZE);
     if (len < ZIGBEE_BUFFER_SIZE) {
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
 }
 
 //断开连接
-void zigbee_disconnect(ZIGBEE *zigbee) {
+void zigbee_disconnect(zigbee_t *zigbee) {
     if (zigbee == NULL) {
         return;
     }

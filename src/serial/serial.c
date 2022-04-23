@@ -1,24 +1,20 @@
 #include "serial.h"
 #include "../util.h"
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <fcntl.h>
 
 //打开串口
-SERIAL serial_open(SERIAL_OPTION option) {
+serial_t serial_open(serial_option_t option) {
     int fd = open(option.name, O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd == -1) {
-        perror("open serial error!\n");
+        perror("open serial error!");
         return -1;
     }
     if (fcntl(fd, F_SETFL, 0) < 0) {
-        perror("fcntl error!\n");
+        perror("fcntl error!");
         return -1;
     }
     struct termios opt;
     if (tcgetattr(fd, &opt) != 0) {
-        perror("setup serial error!\n");
+        perror("setup serial error!");
         return -1;
     }
     //设置波特率
@@ -54,7 +50,7 @@ SERIAL serial_open(SERIAL_OPTION option) {
 }
 
 //从串口中读数据
-size_t serial_read(SERIAL serial, byte_t *dst, size_t size) {
+size_t serial_read(serial_t serial, byte_t *dst, size_t size) {
     if (serial == -1) {
         return 0;
     }
@@ -66,7 +62,7 @@ size_t serial_read(SERIAL serial, byte_t *dst, size_t size) {
 }
 
 //向串口写数据
-size_t serial_write(SERIAL serial, byte_t *data, int offset, size_t size) {
+size_t serial_write(serial_t serial, byte_t *data, int offset, size_t size) {
     if (serial == -1) {
         return 0;
     }
@@ -82,7 +78,7 @@ size_t serial_write(SERIAL serial, byte_t *data, int offset, size_t size) {
 }
 
 //关闭串口
-void serial_close(SERIAL serial) {
+void serial_close(serial_t serial) {
     if (serial == -1) {
         return;
     }

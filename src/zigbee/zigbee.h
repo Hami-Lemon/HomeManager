@@ -13,20 +13,20 @@
 #define ZIGBEE_BUFFER_SIZE 36
 
 typedef struct ZIGBEE {
-    SERIAL serial; //对应的串口
+    serial_t serial; //对应的串口
     int device_id; //设备id
-} ZIGBEE;
+} zigbee_t;
 
 //连接ZIGBEE
-ZIGBEE *zigbee_connect(char *name);
+zigbee_t *zigbee_connect(char *name);
 
 //读取数据
-int zigbee_read(ZIGBEE *zigbee, byte_t *dst);
+int zigbee_read(zigbee_t *zigbee, byte_t *dst);
 
 //发送命令
-bool_t zigbee_operation(ZIGBEE *zigbee, byte_t operation);
+bool zigbee_operation(zigbee_t *zigbee, byte_t operation);
 
 //断开连接
-void zigbee_disconnect(ZIGBEE *zigbee);
+void zigbee_disconnect(zigbee_t *zigbee);
 
 #endif //MANAGER_ZIGBEE_H
