@@ -5,7 +5,8 @@ set(SOURCE
         src/serial/serial.c
         src/server/server.c src/server/connection.c src/server/const.c
         src/zigbee/zigbee.c
-        src/camera/camera.c src/camera/camera.h
+        src/camera/camera.c
+        src/setting.c
         src/util.c src/main.c)
 
 #是否使用arm-linux-gcc编译,默认使用gcc
@@ -39,10 +40,12 @@ if (${Threads_FOUND})
 endif ()
 
 #cJson https://github.com/DaveGamble/cJSON v1.7.15
-set(CJSON_SOURCE src/cJson/cJSON.c)
+set(CJSON_SOURCE cJson/cJSON.c)
+set(CJSON_HEADER cJson/)
 add_library(cJson STATIC ${CJSON_SOURCE})
 
 add_executable(${PROJECT_NAME} ${SOURCE})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CJSON_HEADER})
 target_link_libraries(${PROJECT_NAME} PRIVATE cJson)
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 

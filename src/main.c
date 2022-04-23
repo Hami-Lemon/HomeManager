@@ -5,6 +5,7 @@
 #include "zigbee/zigbee.h"
 #include "camera/camera.h"
 #include "util.h"
+#include "setting.h"
 
 int main() {
     /*TCP_SERVER *server = tcp_server_listen(NULL, 8888);
@@ -47,7 +48,7 @@ int main() {
         }
     }
     zigbee_disconnect(zigbee);*/
-    camera_t *camera = camera_attach("/dev/video0");
+    /*camera_t *camera = camera_attach("/dev/video0");
     if (camera == NULL) {
         return 1;
     }
@@ -61,6 +62,9 @@ int main() {
     printf("%d %d\n", camera->option.height, camera->option.width);
     printf("%d %d\n", camera->option.format, camera->option.fps);
     close(camera->fd);
-    free(camera);
+    free(camera);*/
+    setting_t *setting = read_setting();
+    setting_print(setting);
+    setting_free(setting);
     return 0;
 }
