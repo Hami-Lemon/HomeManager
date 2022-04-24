@@ -4,12 +4,11 @@
 #include "constdef.h"
 
 //设备号
-const byte_t DEVICE_VOICE = 0x00;  // 语音模块
-const byte_t DEVICE_CAMERA = 0x02; //相机模块
-const byte_t DEVICE_ZIGBEE = 0x04; // m0模块
+const byte_t DEVICE_VOICE = 0;  // 语音模块
+const byte_t DEVICE_CAMERA = 1; //相机模块
+const byte_t DEVICE_ZIGBEE = 2; // m0模块
 //语音模块操作
-const byte_t OPERATION_VOICE_RECORD = 0x00; // 录音
-const byte_t OPERATION_VOICE_PLAY = 0x02;   // 播放语音
+const byte_t OPERATION_VOICE_PLAY = 0x01;   // 播放语音
 //相机模块操作
 
 // zigbee模块操作

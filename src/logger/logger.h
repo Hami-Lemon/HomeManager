@@ -1,5 +1,7 @@
 //输出日志到控制台
-
+/**
+ * logger_debug(LOGGER("msg:%s"),"Hello");
+ */
 #ifndef MANAGER_LOGGER_H
 #define MANAGER_LOGGER_H
 #define LOGGER(fmt) __FILE__, __LINE__, fmt
