@@ -3,11 +3,12 @@ cmake_minimum_required(VERSION 3.16)
 # 源码文件
 set(SOURCE
         src/serial/serial.c
-        src/server/server.c src/server/connection.c src/server/const.c
+        src/server/server.c
         src/zigbee/zigbee.c
         src/camera/camera.c
-        src/setting.c
-        src/util.c src/main.c)
+        src/cstring/cstring.c
+        src/logger/logger.c
+        src/setting.c src/constdef.c src/main.c)
 
 #是否使用arm-linux-gcc编译,默认使用gcc
 set(ARM_LINUX)

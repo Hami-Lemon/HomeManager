@@ -6,13 +6,14 @@
 #define MANAGER_SETTING_H
 
 #include "constdef.h"
+#include "cstring/cstring.h"
 #include <cJSON.h>
 
 #define SETTING_FILE "./setting.json"
 
 //摄像头设置
 typedef struct CAMERA_SETTING {
-    char *name;
+    string_t *name;
     uint32_t width;
     uint32_t height;
     uint32_t fps;
@@ -20,15 +21,22 @@ typedef struct CAMERA_SETTING {
 
 //服务端设置
 typedef struct SERVER_SETTING {
-    char *ip;
+    string_t *ip;
     int port;
 } server_setting_t;
 
+//日志配置
+typedef struct LOGGER_SETTING {
+    string_t *fmt;
+    int level;
+} logger_setting_t;
+
 //设置
 typedef struct SETTING {
-    char *zigbee;
+    string_t *zigbee;
     server_setting_t *server;
     camera_setting_t *camera;
+    logger_setting_t *logger;
 } setting_t;
 
 //读取设置

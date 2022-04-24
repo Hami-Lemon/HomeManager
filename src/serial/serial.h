@@ -26,7 +26,7 @@ serial_t serial_open(serial_option_t option);
 size_t serial_read(serial_t serial, byte_t *dst, size_t size);
 
 //向串口写数据
-size_t serial_write(serial_t serial, byte_t *data, int offset, size_t size);
+size_t serial_write(serial_t serial, const byte_t *data, int offset, size_t size);
 
 //关闭串口
 void serial_close(serial_t serial);

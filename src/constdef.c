@@ -1,4 +1,7 @@
-#include "const.h"
+//
+// Created by Hami Lemon on 2022/4/24.
+//
+#include "constdef.h"
 
 //设备号
 const byte_t DEVICE_VOICE = 0x00;  // 语音模块

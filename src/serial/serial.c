@@ -1,20 +1,23 @@
 #include "serial.h"
-#include "../util.h"
+#include "../logger/logger.h"
 
 //打开串口
 serial_t serial_open(serial_option_t option) {
     int fd = open(option.name, O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd == -1) {
-        perror("open serial error!");
+        logger_error(LOGGER("open serial:%s error!"), option.name);
+        perror("");
         return -1;
     }
     if (fcntl(fd, F_SETFL, 0) < 0) {
-        perror("fcntl error!");
+        logger_error(LOGGER("serial:%s fcntl error!"), option.name);
+        perror("");
         return -1;
     }
     struct termios opt;
     if (tcgetattr(fd, &opt) != 0) {
-        perror("setup serial error!");
+        logger_error(LOGGER("serial:%s setup error!"), option.name);
+        perror("");
         return -1;
     }
     //设置波特率
@@ -43,7 +46,8 @@ serial_t serial_open(serial_option_t option) {
 
     //激活配置 (将修改后的termios数据设置到串口中）
     if (tcsetattr(fd, TCSANOW, &opt) != 0) {
-        perror("serial_Set function->com set Error");
+        logger_error(LOGGER("serial:%s set configure error!"), option.name);
+        perror("");
         return -1;
     }
     return fd;
@@ -62,13 +66,15 @@ size_t serial_read(serial_t serial, byte_t *dst, size_t size) {
 }
 
 //向串口写数据
-size_t serial_write(serial_t serial, byte_t *data, int offset, size_t size) {
+size_t serial_write(serial_t serial, const byte_t *data, int offset, size_t size) {
     if (serial == -1) {
         return 0;
     }
     byte_t *buffer = malloc(sizeof(byte_t) * (size));
     unsigned long end = offset + size;
-    data_copy(buffer, data, offset, (int) end);
+    for (int index = 0, i = offset; i < end; ++i, ++index) {
+        buffer[index] = data[i];
+    }
     size_t len = write(serial, buffer, size);
     free(buffer);
     if (len < size) {

@@ -1,11 +1,10 @@
 #include "server/server.h"
-#include "server/connection.h"
 #include "serial/serial.h"
 #include "constdef.h"
 #include "zigbee/zigbee.h"
 #include "camera/camera.h"
-#include "util.h"
 #include "setting.h"
+#include "logger/logger.h"
 
 int main() {
     /*TCP_SERVER *server = tcp_server_listen(NULL, 8888);
@@ -65,6 +64,11 @@ int main() {
     free(camera);*/
     setting_t *setting = read_setting();
     setting_print(setting);
+    set_logger_level(setting->logger->level);
+    set_logger_fmt(setting->logger->fmt->c_str);
+    logger_debug(LOGGER("demo"));
+    logger_debug(LOGGER("%d %s"), 1, "ok");
+    logger_error(LOGGER("error"));
     setting_free(setting);
     return 0;
 }
