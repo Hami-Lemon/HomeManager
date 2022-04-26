@@ -261,7 +261,7 @@ bool camera_start(camera_t *camera) {
         logger_debug(LOGGER("camera: already capturing"));
         return true;
     }
-    logger_debug(LOGGER("allocate buffer count: %ld\n"), camera->buffer_count);
+    logger_debug(LOGGER("allocate buffer count: %ld"), camera->buffer_count);
     for (size_t i = 0; i < camera->buffer_count; i++) {
         struct v4l2_buffer buf;
         memset(&buf, 0, sizeof(struct v4l2_buffer));

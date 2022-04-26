@@ -26,8 +26,10 @@ setting_t *read_setting() {
 
     setting_t *default_setting = malloc(sizeof(setting_t));
     default_setting->zigbee = string_new("/dev/ttyUSB0", -1);
+    default_setting->voice = string_new("/dev/ttyUSB1", -1);
     default_setting->server = default_server_setting;
     default_setting->camera = default_camera_setting;
+    default_setting->logger = default_logger_setting;
 
     char buffer[buffer_size];
     int fd = open(SETTING_FILE, O_RDONLY);
@@ -47,6 +49,11 @@ setting_t *read_setting() {
     if (zigbee != NULL) {
         string_free(default_setting->zigbee);
         default_setting->zigbee = string_new(cJSON_GetStringValue(zigbee), -1);
+    }
+    cJSON *voice = cJSON_GetObjectItem(json, "voice");
+    if (voice != NULL) {
+        string_free(default_setting->voice);
+        default_setting->voice = string_new(cJSON_GetStringValue(voice), -1);
     }
 
     cJSON *camera = cJSON_GetObjectItem(json, "camera");
@@ -95,9 +102,6 @@ setting_t *read_setting() {
             default_logger_setting->level = (int) cJSON_GetNumberValue(logger_level);
         }
     }
-    default_setting->server = default_server_setting;
-    default_setting->camera = default_camera_setting;
-    default_setting->logger = default_logger_setting;
 
     cJSON_Delete(json);
     return default_setting;
@@ -110,6 +114,7 @@ void setting_print(setting_t *setting) {
 
     printf("setting:\n");
     printf("  zigbee:%s\n", setting->zigbee->c_str);
+    printf("  voice:%s\n", setting->voice->c_str);
 
     printf("  camera:\n");
     printf("      name:%s\n", camera->name->c_str);

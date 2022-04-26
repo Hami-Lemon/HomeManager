@@ -1,5 +1,6 @@
 {
   "zigbee": "/dev/ttyUSB0",
+  "voice": "/dev/ttyUSB1",
   "camera": {
     "name": "/dev/video0",
     "fps": 30,

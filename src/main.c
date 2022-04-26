@@ -20,7 +20,7 @@ static handler_t handler_table[HANDLER_NUM];//设备操作表
 
 //连接语音模块
 bool connect_voice() {
-    voice = voice_attach("/dev/ttyUSB0");
+    voice = voice_attach(setting->voice->c_str);
     if (voice == NULL) {
         logger_error(LOGGER("connect voice fail"));
         return false;
@@ -47,6 +47,8 @@ bool connect_camera() {
         logger_error(LOGGER("config camera fail"));
         return false;
     }
+    logger_info(LOGGER("width:%d height:%d fps:%d"),
+                camera->option.width, camera->option.height, camera->option.fps);
     return true;
 }
 //连接M0模块
@@ -128,14 +130,14 @@ int main() {
     set_logger_level(setting->logger->level);
     set_logger_fmt(setting->logger->fmt->c_str);
     //启动各项服务
-    /*if (!attach_zigbee()) {
+    if (!attach_zigbee()) {
         goto FAIL;
-    }*/
+    }
     if (!connect_voice()) {
         goto FAIL;
     }
     if (!connect_camera()) {
-//        goto FAIL;
+        goto FAIL;
     }
     if (!start_tcp_server()) {
         goto FAIL;

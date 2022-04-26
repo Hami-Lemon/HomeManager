@@ -34,6 +34,7 @@ typedef struct LOGGER_SETTING {
 //设置
 typedef struct SETTING {
     string_t *zigbee;
+    string_t *voice;
     server_setting_t *server;
     camera_setting_t *camera;
     logger_setting_t *logger;
