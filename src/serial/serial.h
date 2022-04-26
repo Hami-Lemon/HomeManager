@@ -12,7 +12,7 @@
 #define SERIAL_BUFFER_SIZE 64
 //串口配置
 typedef struct SERIAL_OPTION {
-    char *name; //串口文件
+    const char *name; //串口文件
     speed_t baud;//波特率
 } serial_option_t;
 

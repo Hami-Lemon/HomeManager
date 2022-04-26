@@ -58,7 +58,7 @@ size_t serial_read(serial_t serial, byte_t *dst, size_t size) {
     if (serial == -1) {
         return 0;
     }
-    size_t len = read(serial, dst, size);
+    ssize_t len = read(serial, dst, size);
     if (len <= 0) {
         return 0;
     }
@@ -75,7 +75,7 @@ size_t serial_write(serial_t serial, const byte_t *data, int offset, size_t size
     for (int index = 0, i = offset; i < end; ++i, ++index) {
         buffer[index] = data[i];
     }
-    size_t len = write(serial, buffer, size);
+    ssize_t len = write(serial, buffer, size);
     free(buffer);
     if (len < size) {
         return 0;

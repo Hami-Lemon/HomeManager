@@ -18,7 +18,7 @@ typedef struct ZIGBEE {
 } zigbee_t;
 
 //连接ZIGBEE
-zigbee_t *zigbee_connect(char *name);
+zigbee_t *zigbee_connect(const char *name);
 
 //读取数据
 int zigbee_read(zigbee_t *zigbee, byte_t *dst);

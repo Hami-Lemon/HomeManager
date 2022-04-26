@@ -77,10 +77,10 @@ void tcp_server_close(tcp_server_t server) {
 
 //读取数据，返回读取的数据长度，内容保存在dst中，如果连接关闭，返回0
 size_t tcp_connection_read(tcp_connection_t connection, byte_t *dst, size_t size) {
-    if (connection == -1) {
+    if (connection == -1 || dst == NULL) {
         return 0;
     }
-    size_t length = read(connection, dst, size);
+    ssize_t length = read(connection, dst, size);
     //连接断开
     if (length <= 0) {
         return 0;
@@ -98,7 +98,7 @@ size_t tcp_connection_write(tcp_connection_t connection, const byte_t *data, int
     for (int index = 0, i = offset; i < end; ++i, ++index) {
         buffer[index] = data[i];
     }
-    size_t length = write(connection, buffer, size);
+    ssize_t length = write(connection, buffer, size);
     free(buffer);
 
     if (length < size) {

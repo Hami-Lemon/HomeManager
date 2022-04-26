@@ -5,7 +5,7 @@
 string_t *string_new(char *src, int length) {
     unsigned int len = length < 0 ? strlen(src) : length;
     string_t *str = malloc(sizeof(string_t));
-    str->c_str = malloc(sizeof(char) * (len + 1));
+    str->c_str = calloc(len + 1, sizeof(char));
     str->length = len;
     for (int i = 0; i < len && src[i] != '\0'; ++i) {
         str->c_str[i] = src[i];
@@ -18,7 +18,7 @@ string_t *string_new(char *src, int length) {
 string_t *string_cat(string_t *str1, string_t *str2) {
     unsigned int len = str1->length + str2->length;
     string_t *str = malloc(sizeof(string_t));
-    str->c_str = malloc((sizeof(char) * (len + 1)));
+    str->c_str = calloc(len + 1, sizeof(char));
     str->length = len;
     int index = 0;
     for (int i = 0; i < str1->length; ++i, ++index) {
@@ -34,7 +34,7 @@ string_t *string_cat(string_t *str1, string_t *str2) {
 //获取子串
 string_t *string_substring(string_t *src, int start, int end) {
     string_t *str = malloc(sizeof(string_t));
-    str->c_str = malloc(sizeof(char) * (end - start + 1));
+    str->c_str = calloc(end - start + 1, sizeof(char));
     int index = 0;
     for (int i = start; i < src->length && i < end; ++i) {
         str->c_str[index] = src->c_str[i];
@@ -69,7 +69,7 @@ bool string_equal(string_t *str1, string_t *str2) {
 //字符串复制
 string_t *string_copy(string_t *src) {
     string_t *str = malloc(sizeof(string_t));
-    str->c_str = malloc(sizeof(char) * (src->length + 1));
+    str->c_str = calloc(src->length + 1, sizeof(char));
     for (int i = 0; i < src->length; i++) {
         str->c_str[i] = src->c_str[i];
     }

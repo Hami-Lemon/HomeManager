@@ -6,15 +6,9 @@
 #include "logger/logger.h"
 #include "zigbee/zigbee.h"
 #include "camera/camera.h"
+#include "voice/voice.h"
 
-//将src中[0, len)中的数据追加到dst中，从offset开始
-void data_append(byte_t *dst, const byte_t *src, size_t offset, size_t len) {
-    for (size_t i = 0; i < len; ++i, offset++) {
-        dst[offset] = src[i];
-    }
-}
-
-void zigbee_handler(tcp_connection_t conn, void *device, const byte_t *buffer) {
+void zigbee_handler(tcp_connection_t conn, void *device, const byte_t *buffer, size_t buf_len) {
     byte_t operation = buffer[1];
     zigbee_t *zigbee = (zigbee_t *) device;
     if (operation == OPERATION_ZIGBEE_INFO) {
@@ -39,7 +33,7 @@ void zigbee_handler(tcp_connection_t conn, void *device, const byte_t *buffer) {
     }
 }
 
-void camera_handler(tcp_connection_t conn, void *device, const byte_t *buffer) {
+void camera_handler(tcp_connection_t conn, void *device, const byte_t *buffer, size_t buf_len) {
     camera_t *camera = (camera_t *) device;
     byte_t operation = buffer[1];
     if (operation == OPERATION_CAMERA_START) {
@@ -55,7 +49,7 @@ void camera_handler(tcp_connection_t conn, void *device, const byte_t *buffer) {
         byte_t *data = malloc(sizeof(byte_t) * size);
         data[0] = DEVICE_CAMERA;
         data[1] = OPERATION_CAMERA_CAPTURE;
-        data_append(data, camera->curr.start, 2, camera->curr.length);
+        memcpy(data + 2, camera->curr.start, camera->curr.length);
         size_t len = tcp_connection_write(conn, data, 0, size);
         if (len <= 0) {
             logger_warn(LOGGER("send data fail"));
@@ -68,6 +62,19 @@ void camera_handler(tcp_connection_t conn, void *device, const byte_t *buffer) {
     }
 }
 
-void voice_handler(tcp_connection_t conn, void *device, const byte_t *buffer) {
-
+void voice_handler(tcp_connection_t conn, void *device, const byte_t *buffer, size_t buf_len) {
+    voice_t *voice = (voice_t *) device;
+    if (buffer[1] == OPERATION_VOICE_PLAY) {
+        if (buf_len <= 3) {
+            logger_warn(LOGGER("voice: empty data"));
+            return;
+        }
+        voice->charset = buffer[2];
+        bool ok = voice_play(voice, (const char *) (buffer + 3), buf_len - 3);
+        if (!ok) {
+            logger_warn(LOGGER("voice: play fail"));
+        }
+    } else {
+        logger_warn(LOGGER("not support operation:%d"), buffer[1]);
+    }
 }

@@ -20,7 +20,6 @@ extern const byte_t DEVICE_VOICE;  // 语音模块
 extern const byte_t DEVICE_CAMERA; //相机模块
 extern const byte_t DEVICE_ZIGBEE; // m0模块
 //语音模块操作
-extern const byte_t OPERATION_VOICE_RECORD; // 录音
 extern const byte_t OPERATION_VOICE_PLAY;   // 播放语音
 //相机模块操作
 extern const byte_t OPERATION_CAMERA_START; //摄像头开始采集

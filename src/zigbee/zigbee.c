@@ -16,7 +16,7 @@ void init_send_data() {
 }
 
 //连接ZIGBEE
-zigbee_t *zigbee_connect(char *name) {
+zigbee_t *zigbee_connect(const char *name) {
     serial_option_t option;
     option.name = name;
     option.baud = B115200;

@@ -8,6 +8,7 @@ set(SOURCE
         src/camera/camera.c
         src/cstring/cstring.c
         src/logger/logger.c
+        src/voice/voice.c
         src/setting.c src/constdef.c src/handler.c src/main.c)
 
 #是否使用arm-linux-gcc编译,默认使用gcc

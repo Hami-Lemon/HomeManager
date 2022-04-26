@@ -5,16 +5,29 @@
 #include "handler.h"
 #include "logger/logger.h"
 #include "camera/camera.h"
+#include "voice/voice.h"
 #include <signal.h>
 #include <pthread.h>
 
 #define HANDLER_NUM 3
 
-setting_t *setting;
-tcp_server_t server;
-zigbee_t *zigbee;
-camera_t *camera;
-handler_t handler_table[HANDLER_NUM];//设备操作表
+static setting_t *setting;
+static tcp_server_t server;
+static zigbee_t *zigbee;
+static camera_t *camera;
+static voice_t *voice;
+static handler_t handler_table[HANDLER_NUM];//设备操作表
+
+//连接语音模块
+bool connect_voice() {
+    voice = voice_attach("/dev/ttyUSB0");
+    if (voice == NULL) {
+        logger_error(LOGGER("connect voice fail"));
+        return false;
+    }
+    logger_info(LOGGER("connect voice success"));
+    return true;
+}
 
 //连接摄像头
 bool connect_camera() {
@@ -62,17 +75,21 @@ bool start_tcp_server() {
 
 //释放资源
 void release(int arg) {
+    if (arg == SIGSEGV) {
+        logger_warn(LOGGER("memory error"));
+    }
     logger_info(LOGGER("stop progress, release resource"));
     tcp_server_close(server);
     zigbee_disconnect(zigbee);
     camera_detach(camera);
+    voice_detach(voice);
     exit(0);
 }
 
 //处理每一个连接
 void *server_handler(void *args) {
     tcp_connection_t conn = *((tcp_connection_t *) args);
-    byte_t buffer[TCP_BUFFER_SIZE];
+    byte_t *buffer = calloc(TCP_BUFFER_SIZE, sizeof(buffer));
     buffer[0] = 0;
     size_t len;
     while (true) {
@@ -89,15 +106,16 @@ void *server_handler(void *args) {
         byte_t device_code = buffer[0];
         void *device = NULL;
         if (device_code == DEVICE_VOICE) {
-//            device =
+            device = voice;
         } else if (device_code == DEVICE_CAMERA) {
             device = camera;
         } else if (device_code == DEVICE_ZIGBEE) {
             device = zigbee;
         }
-        handler_table[device_code](conn, device, buffer);
+        handler_table[device_code](conn, device, buffer, len);
     }
     logger_debug(LOGGER("connection:%d close"), conn);
+    free(buffer);
     tcp_connection_close(conn);
     return NULL;
 }
@@ -113,8 +131,11 @@ int main() {
     /*if (!attach_zigbee()) {
         goto FAIL;
     }*/
-    if (!connect_camera()) {
+    if (!connect_voice()) {
         goto FAIL;
+    }
+    if (!connect_camera()) {
+//        goto FAIL;
     }
     if (!start_tcp_server()) {
         goto FAIL;
