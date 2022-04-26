@@ -26,6 +26,7 @@ if (NOT DEFINED CMAKE_BUILD_TYPE)
 endif ()
 # C99
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 
 project(manager C)
 

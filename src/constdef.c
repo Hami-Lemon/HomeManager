@@ -10,7 +10,9 @@ const byte_t DEVICE_ZIGBEE = 2; // m0模块
 //语音模块操作
 const byte_t OPERATION_VOICE_PLAY = 0x01;   // 播放语音
 //相机模块操作
-
+const byte_t OPERATION_CAMERA_START = 0x00; //摄像头开始采集
+const byte_t OPERATION_CAMERA_CAPTURE = 0x01; //捕获一张图片
+const byte_t OPERATION_CAMERA_STOP = 0x03; //摄像头停止采集
 // zigbee模块操作
 const byte_t OPERATION_ZIGBEE_LIGHT_ON = 0x00;    //开灯
 const byte_t OPERATION_ZIGBEE_LIGHT_OFF = 0x01;   //关灯
@@ -23,3 +25,4 @@ const byte_t OPERATION_ZIGBEE_FANS_FAST = 0x07;   //风扇快速
 const byte_t OPERATION_ZIGBEE_FANS_OFF = 0x08;    //风扇关
 const byte_t OPERATION_ZIGBEE_DIGITAL_ON = 0x09;  //开数码管
 const byte_t OPERATION_ZIGBEE_DIGITAL_OFF = 0x0a; //关数码管
+const byte_t OPERATION_ZIGBEE_INFO = 0x0b; //获取环境信息

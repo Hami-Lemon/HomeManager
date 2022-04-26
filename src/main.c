@@ -4,24 +4,50 @@
 #include "setting.h"
 #include "handler.h"
 #include "logger/logger.h"
+#include "camera/camera.h"
 #include <signal.h>
 #include <pthread.h>
 
 #define HANDLER_NUM 3
+
 setting_t *setting;
 tcp_server_t server;
 zigbee_t *zigbee;
-handler_t handler_table[HANDLER_NUM];
+camera_t *camera;
+handler_t handler_table[HANDLER_NUM];//设备操作表
 
+//连接摄像头
+bool connect_camera() {
+    camera_setting_t *camera_setting = setting->camera;
+    camera_option_t option;
+    option.width = camera_setting->width;
+    option.height = camera_setting->height;
+    option.fps = camera_setting->fps;
+    camera = camera_attach(camera_setting->name->c_str);
+    if (camera == NULL) {
+        logger_error(LOGGER("connect camera fail"));
+        return false;
+    }
+    logger_info(LOGGER("connect camera success"));
+    bool ok = camera_config(camera, option);
+    if (!ok) {
+        logger_error(LOGGER("config camera fail"));
+        return false;
+    }
+    return true;
+}
+//连接M0模块
 bool attach_zigbee() {
     zigbee = zigbee_connect(setting->zigbee->c_str);
     if (zigbee == NULL) {
         logger_error(LOGGER("connect zigbee fail"));
         return false;
     }
+    logger_info(LOGGER("connect zigbee success"));
+    logger_info(LOGGER("zigbee device id:%d"), zigbee->device_id);
     return true;
 }
-
+//启动tcp服务器
 bool start_tcp_server() {
     server_setting_t *server_setting = setting->server;
     server = tcp_server_listen(server_setting->ip->c_str, server_setting->port);
@@ -39,15 +65,18 @@ void release(int arg) {
     logger_info(LOGGER("stop progress, release resource"));
     tcp_server_close(server);
     zigbee_disconnect(zigbee);
+    camera_detach(camera);
     exit(0);
 }
 
+//处理每一个连接
 void *server_handler(void *args) {
     tcp_connection_t conn = *((tcp_connection_t *) args);
     byte_t buffer[TCP_BUFFER_SIZE];
     buffer[0] = 0;
     size_t len;
     while (true) {
+        //读取数据
         len = tcp_connection_read(conn, buffer, TCP_BUFFER_SIZE);
         if (len <= 0) {
             break;
@@ -56,10 +85,20 @@ void *server_handler(void *args) {
             logger_warn(LOGGER("read error data"));
             continue;
         }
-        handler_table[buffer[0]](conn, buffer);
+        //根据请求数据中的设备号，选择对应的处理函数
+        byte_t device_code = buffer[0];
+        void *device = NULL;
+        if (device_code == DEVICE_VOICE) {
+//            device =
+        } else if (device_code == DEVICE_CAMERA) {
+            device = camera;
+        } else if (device_code == DEVICE_ZIGBEE) {
+            device = zigbee;
+        }
+        handler_table[device_code](conn, device, buffer);
     }
-    tcp_connection_close(conn);
     logger_debug(LOGGER("connection:%d close"), conn);
+    tcp_connection_close(conn);
     return NULL;
 }
 
@@ -71,12 +110,15 @@ int main() {
     set_logger_level(setting->logger->level);
     set_logger_fmt(setting->logger->fmt->c_str);
     //启动各项服务
-    if (!start_tcp_server()) {
-        goto FAIL;
-    }
     /*if (!attach_zigbee()) {
         goto FAIL;
     }*/
+    if (!connect_camera()) {
+        goto FAIL;
+    }
+    if (!start_tcp_server()) {
+        goto FAIL;
+    }
     //处理退出信号
     signal(SIGINT, release);
     signal(SIGQUIT, release);

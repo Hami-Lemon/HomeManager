@@ -164,7 +164,7 @@ void logger_log(const char *s_file, int s_line, log_level level, const char *fmt
 }
 
 void logger_debug(const char *s_file, int s_line, const char *fmt, ...) {
-    if(LOG_DEBUG < current_level){
+    if (LOG_DEBUG < current_level) {
         return;
     }
     va_list ap;
@@ -174,7 +174,7 @@ void logger_debug(const char *s_file, int s_line, const char *fmt, ...) {
 }
 
 void logger_info(const char *s_file, int s_line, const char *fmt, ...) {
-    if(LOG_INFO < current_level){
+    if (LOG_INFO < current_level) {
         return;
     }
     va_list ap;
@@ -184,7 +184,7 @@ void logger_info(const char *s_file, int s_line, const char *fmt, ...) {
 }
 
 void logger_warn(const char *s_file, int s_line, const char *fmt, ...) {
-    if(LOG_WARN < current_level){
+    if (LOG_WARN < current_level) {
         return;
     }
     va_list ap;
@@ -194,9 +194,6 @@ void logger_warn(const char *s_file, int s_line, const char *fmt, ...) {
 }
 
 void logger_error(const char *s_file, int s_line, const char *fmt, ...) {
-    if(LOG_ERROR < current_level){
-        return;
-    }
     va_list ap;
     va_start(ap, fmt);
     logger_log(s_file, s_line, LOG_ERROR, fmt, ap);
