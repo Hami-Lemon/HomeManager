@@ -1,0 +1,18 @@
+{
+  "zigbee": "/dev/ttyUSB0",
+  "voice": "/dev/ttyUSB1",
+  "camera": {
+    "name": "/dev/video0",
+    "fps": 30,
+    "width": 1920,
+    "height": 1080
+  },
+  "server": {
+    "ip": "0.0.0.0",
+    "port": 8888
+  },
+  "logger": {
+    "level": 1,
+    "fmt": "%l %d %t %f:%n %m"
+  }
+}

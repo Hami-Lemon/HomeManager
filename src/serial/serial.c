@@ -72,7 +72,7 @@ size_t serial_write(serial_t serial, const byte_t *data, int offset, size_t size
     }
     byte_t *buffer = malloc(sizeof(byte_t) * (size));
     unsigned long end = offset + size;
-    for (int index = 0, i = offset; i < end; ++i, ++index) {
+    for (size_t index = 0, i = offset; i < end; ++i, ++index) {
         buffer[index] = data[i];
     }
     ssize_t len = write(serial, buffer, size);

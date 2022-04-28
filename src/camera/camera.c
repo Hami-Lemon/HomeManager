@@ -139,6 +139,9 @@ bool camera_config(camera_t *camera, camera_option_t option) {
     if (strstr(formatBuf, "Motion-JPEG") != NULL) {
         format.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;//mjpeg
         logger_info(LOGGER("set camera picture format MJPEG"));
+    } else if (strstr(formatBuf, "MJPEG") != NULL) {
+        format.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;//mjpeg
+        logger_info(LOGGER("set camera picture format MJPEG"));
     } else {
         logger_error(LOGGER("camera not support format MJPEG"));
         return false;
@@ -341,7 +344,9 @@ void camera_detach(camera_t *camera) {
 bool camera_capture(camera_t *camera) {
     if (camera->curr.start == NULL) {
         logger_warn(LOGGER("camera curr start is NULL!"));
-        return false;
+        if (!camera_start(camera)) {
+            return false;
+        }
     }
 
     fd_set fds;

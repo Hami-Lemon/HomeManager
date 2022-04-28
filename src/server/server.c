@@ -95,7 +95,7 @@ size_t tcp_connection_write(tcp_connection_t connection, const byte_t *data, int
     }
     unsigned long end = offset + size;
     byte_t *buffer = malloc(sizeof(byte_t) * size);
-    for (int index = 0, i = offset; i < end; ++i, ++index) {
+    for (size_t index = 0, i = offset; i < end; ++i, ++index) {
         buffer[index] = data[i];
     }
     ssize_t length = write(connection, buffer, size);

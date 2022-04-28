@@ -91,24 +91,25 @@ void release(int arg) {
 //处理每一个连接
 void *server_handler(void *args) {
     tcp_connection_t conn = *((tcp_connection_t *) args);
-    byte_t *buffer = calloc(TCP_BUFFER_SIZE, sizeof(buffer));
-    buffer[0] = 0;
+    byte_t *buffer = calloc(TCP_BUFFER_SIZE, sizeof(byte_t));
     size_t len;
     while (true) {
         //读取数据
         len = tcp_connection_read(conn, buffer, TCP_BUFFER_SIZE);
-        if (len <= 0) {
+        if (len == 0) {
             break;
         }
         if (len < 2 || buffer[0] >= HANDLER_NUM) {
             logger_warn(LOGGER("read error data"));
             continue;
         }
+        logger_debug(LOGGER("read conn %d bytes"), len);
         //根据请求数据中的设备号，选择对应的处理函数
         byte_t device_code = buffer[0];
         void *device = NULL;
         if (device_code == DEVICE_VOICE) {
             device = voice;
+            printf("%s\n", buffer + 3);
         } else if (device_code == DEVICE_CAMERA) {
             device = camera;
         } else if (device_code == DEVICE_ZIGBEE) {
@@ -131,13 +132,13 @@ int main() {
     set_logger_fmt(setting->logger->fmt->c_str);
     //启动各项服务
     if (!attach_zigbee()) {
-        goto FAIL;
+//        goto FAIL;
     }
     if (!connect_voice()) {
-        goto FAIL;
+//        goto FAIL;
     }
     if (!connect_camera()) {
-        goto FAIL;
+//        goto FAIL;
     }
     if (!start_tcp_server()) {
         goto FAIL;

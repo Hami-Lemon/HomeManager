@@ -8,6 +8,9 @@
 #include "camera/camera.h"
 #include "voice/voice.h"
 
+/**
+ * zigbee|操作码|数据体
+ */
 void zigbee_handler(tcp_connection_t conn, void *device, const byte_t *buffer, size_t buf_len) {
     byte_t operation = buffer[1];
     zigbee_t *zigbee = (zigbee_t *) device;
@@ -20,12 +23,17 @@ void zigbee_handler(tcp_connection_t conn, void *device, const byte_t *buffer, s
         if (len == 0) {
             logger_warn(LOGGER("read info from zigbee fail"));
         } else {
-            size_t wn = tcp_connection_write(conn, zigbee_buf, 0, len);
+            byte_t *buf = calloc(len + 2, sizeof(byte_t));
+            buf[0] = DEVICE_ZIGBEE;
+            buf[1] = operation;
+            memcpy(buf + 2, zigbee_buf, len);
+            size_t wn = tcp_connection_write(conn, buf, 0, len + 2);
             logger_debug(LOGGER("read %d bytes from zigbee, send %d bytes to conn"),
                          len, wn);
-            if (wn < len) {
+            if (wn < len + 2) {
                 logger_warn(LOGGER("read zigbee info: send bytes less than get bytes!"));
             }
+            free(buf);
         }
     } else {
         logger_debug(LOGGER("send operation:%02X to zigbee"), operation);
@@ -33,6 +41,9 @@ void zigbee_handler(tcp_connection_t conn, void *device, const byte_t *buffer, s
     }
 }
 
+/**
+ * camera|操作码|数据体
+ */
 void camera_handler(tcp_connection_t conn, void *device, const byte_t *buffer, size_t buf_len) {
     camera_t *camera = (camera_t *) device;
     byte_t operation = buffer[1];
@@ -62,6 +73,9 @@ void camera_handler(tcp_connection_t conn, void *device, const byte_t *buffer, s
     }
 }
 
+/**
+ * voice|操作码|字符编码|文本
+ */
 void voice_handler(tcp_connection_t conn, void *device, const byte_t *buffer, size_t buf_len) {
     voice_t *voice = (voice_t *) device;
     if (buffer[1] == OPERATION_VOICE_PLAY) {

@@ -15,7 +15,7 @@ set(SOURCE
 set(ARM_LINUX)
 option(ARM_LINUX "arm-linux" OFF)
 if (${ARM_LINUX})
-    set(CMAKE_C_COMPILER "arm-linux-gnueabi-gcc")
+    set(CMAKE_C_COMPILER "arm-linux-gcc")
 else ()
     set(CMAKE_C_COMPILER gcc)
 endif ()
